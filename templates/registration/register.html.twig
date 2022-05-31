@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+{# <div class="input-group mb-3"> #}
+    {{ form_start(registrationForm) }}
+    <div class="d-flex flex-column align-items-center">
+    <h3>Регистрация</h3>
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Password'
+        }) }}
+        {{ form_row(registrationForm.firstname) }} 
+        {{ form_row(registrationForm.lastname) }}
+        {{ form_row(registrationForm.patronimic) }}
+        {{ form_row(registrationForm.phone) }}
+        {{ form_row(registrationForm.agreeTerms) }}
+
+        <button type="submit" class="btn">Register</button>
+        </div>
+    {{ form_end(registrationForm) }}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Заказы</h1>
+    {% if is_granted('ROLE_LIBRARIAN')%}
+    <h3>{{library.name}}</h3>
+    {% endif %}
+    <table class="table">
+        <thead>
+            <tr>
+            {% if is_granted('ROLE_LIBRARIAN')%}
+                <th>Заказчик</th>
+                {% endif %}
+                <th>Статус заказа</th>
+                <th>Книга</th>
+                <th>Дата создания/подтверждения</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+            {% if is_granted('ROLE_LIBRARIAN')%}
+                <td>{{ users[order.id] }}</td>
+                {% endif %}
+                <td>
+                   {% if order.status == 'confirmed'%}
+                    Подтвержден
+                    {% else %}
+                    Ожидает подтверждения работником библиотеки 
+                    {% endif %}
+                    </td>
+                <td> {{ books[order.id] }} </td>
+                <td>{{ order.dateCreate ? order.dateCreate|date('Y-m-d') : '' }}
+                <td>
+                    <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn btn-outline-dark">Подробнее</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">У Вас пока нет заказов</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

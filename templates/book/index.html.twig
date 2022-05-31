@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book index{% endblock %}
+
+{% block body %}
+  <section class="py-5 text-center container" style="background: dark;>
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Библиотечные ресурсы</h1>
+        <p class="lead text-muted"style="font-size:18px;" >Поиск книг в электронном виде. Чтобы получить конкретную книгу, достаточно иметь читательский билет в библиотеке, предоставляющей электронный ресурс. Найдите нужную книгу за несколько кликов в бесплатном доступе.</p>
+        
+        {% if is_granted('ROLE_READER') and not is_granted('ROLE_LIBRARIAN') %}
+        <p> <a href="{{ path('app_reader_orders', {'id': app.user.reader.id})}}" class="btn btn-primary my-2"> К моим заказам </a>
+        {% endif %}
+        <form class="d-flex " action="{{ path('app_book_search') }}" method="get">
+            <input class="form-control me-2" type="search" aria-label="Search" name="q" placeholder="Введите название книги">
+            <button class="btn btn-outline-primary" type="submit">Найти</button>
+        </form>
+        </p>
+      </div>
+    </div>
+  </section>
+    {# <h1>Book index</h1> #}
+    <div class="container-fluid">
+    {% for row in books|batch(2) %}
+        <div class="row justify-content-between mt-3">
+            {% for book in row %}
+                <div class="col-md-6">
+                  <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                    <h3 class="mb-0">{{ book.name }}</h3>
+                    <div class="mb-1 text-muted">{{ book.genre }}</div>
+                    <p class="card-text mb-auto" style="font-size:14px;">{{ book.description }}</p>
+                    <div class"row justify-content-between mt-2">
+                        <div class="btn-group">
+                            <a href="{{ path('app_book_show', {'id': book.id}) }}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                            {% if is_granted('ROLE_LIBRARIAN') and upd[book.id] == 'true' %}
+                            <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-sm btn-outline-secondary">Изменить</a>
+                            {% endif %}
+                        </div>
+                        </div>
+                        </div>
+                    <div class="col-auto d-none d-lg-block"><a href="{{ path('app_book_show', {'id': book.id}) }}">
+                    {% if book.posterUrl == null %}
+                        <svg class="bd-placeholder-img" style="justify-contect:center;" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="35%" y="25%" fill="#eceeef" dy=".3em">Обложка</text></svg></a>
+                    {% endif %}
+                         <img src="{{ book.posterUrl }}" class="img-fluid rounded-start" alt=" Обложка отсутствует" style='width: 200px;'></a>
+                    
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+      <div class="col-lg-6 col-md-8 mx-auto">
+         <p class="lead text-muted"style="font-size:18px;" > По указанному запросу пока что нет книг :(  Попробуйте позже</p>
+      </div>
+    {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order{% endblock %}
+
+{% block body %}
+    <h1>Заказ от {{ order.dateCreate ? order.dateCreate|date('Y-m-d') : '' }}</h1>
+    <p>Статус:
+    {% if order.status == 'confirmed'%}
+    Подтвержден</p>
+    {% else %}
+    Ожидает подтверждения работником библиотеки </p>
+    {% endif %}
+{% if is_granted('ROLE_LIBRARIAN')%}
+    <p>Заказчик: {{fio}}</p>
+    <p>Почта заказчика: {{user.email}}</p>
+    <p>Телефон заказчика: {{user.phone}}</p>
+{% endif %}
+    <div class="row g-3">
+        <fieldset aria-label="Disabled fieldset example">
+          <div class="mb-3">
+                <h1>{{ book.name }}</h1>
+                <label class="form-label"> {{ book.author }}</label>
+            </div>
+            <div class="card mb-3" style="max-width: 880px;">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img src="{{ book.posterUrl }}" class="img-fluid rounded-start" alt=" Обложка отсутствует" style='height: 200px;'>
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <p class="card-text">{{ book.description }}</p>
+                    <p class="card-text"><small class="text-muted">{{ book.genre }}</small></p>
+                        <div class="mb-3">
+                        <p class="card-text"> {{ library.name }}</p>
+                       </div>
+                    </div>
+                 </div>
+             </div>
+         </div>
+      </fieldset>
+    </div>
+<a href="{{ path('app_book_index') }}" class="btn btn-primary my-2">Вернуться к поиску книг</a>
+{% if order.status == 'confirmed' and not is_granted('ROLE_LIBRARIAN')%}
+    <a href="{{ book.pdfUrl }}" class="btn btn-primary my-2">Читать онлайн</a>
+{% endif %}
+{% if is_granted('ROLE_LIBRARIAN')%}
+<a href="{{ path('app_order_index') }}" class="btn btn-primary my-2">Вернуться к списку заказов</a>
+<a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn btn-primary my-2">Изменить</a>
+{% endif %}
+<br><br><br><br><br>
+{% endblock %}

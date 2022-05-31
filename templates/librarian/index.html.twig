@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Librarian index{% endblock %}
+
+{% block body %}
+    <h1>Librarian index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Post</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for librarian in librarians %}
+            <tr>
+                <td>{{ librarian.id }}</td>
+                <td>{{ librarian.post }}</td>
+                <td>
+                    <a href="{{ path('app_librarian_show', {'id': librarian.id}) }}">show</a>
+                    <a href="{{ path('app_librarian_edit', {'id': librarian.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_librarian_new') }}">Create new</a>
+{% endblock %}
