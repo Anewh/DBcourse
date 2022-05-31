@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Knp\Snappy\Pdf;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Entity\Order;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/order')]
@@ -48,6 +50,186 @@ class OrderController extends AbstractController
             'books' => $books,
             'library' => $librarian->getLibrary(),
         ]);
+    }
+
+    
+    #[Route('/report-good-status', name: 'app_report_status', methods: ['GET'])]
+    public function makeReportByStatus(Request $request, OrderRepository $orderRepository, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
+    {   
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $librarian = $user->getLibrarian();
+        
+        // те заказы у которых юзер айди
+        $orders = $orderRepository->findByStatus("confirmed");
+        $books = array();
+        //$orders = $orderRepository->findAll();
+        krsort($orders);
+        $users = array();
+        foreach ($orders as $order){
+            $user = $order->getUser()->getUser();
+            $books[$order->getId()] = $order->getBook()->getName();
+            $users[$order->getId()] = $user->getLastname() . ' ' . $user->getFirstname(). ' ' . $user->getPatronimic();
+        }
+        $html =$this->renderView('order/order_report_good_status.html.twig', [
+            'orders' => $orders,
+            'users' => $users,
+            'books' => $books,
+            'library' => $librarian->getLibrary()
+        ]);
+        $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+    }
+
+    #[Route('/report-bad-status', name: 'app_report_status_bad', methods: ['GET'])]
+    public function makeReportByBadStatus(Request $request, OrderRepository $orderRepository, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
+    {   
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $librarian = $user->getLibrarian();
+        
+        // те заказы у которых юзер айди
+        $orders = $orderRepository->findByStatus("not confirmed");
+        $books = array();
+        //$orders = $orderRepository->findAll();
+        krsort($orders);
+        $users = array();
+        foreach ($orders as $order){
+            $user = $order->getUser()->getUser();
+            $books[$order->getId()] = $order->getBook()->getName();
+            $users[$order->getId()] = $user->getLastname() . ' ' . $user->getFirstname(). ' ' . $user->getPatronimic();
+        }
+        $html =$this->renderView('order/order_report_good_status.html.twig', [
+            'orders' => $orders,
+            'users' => $users,
+            'books' => $books,
+            'library' => $librarian->getLibrary()
+        ]);
+        $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+    }
+
+    #[Route('/reportByDays', name: 'app_report_days', methods: ['GET'])]
+    public function makeReportByDays(Request $request, OrderRepository $orderRepository, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $librarian = $user->getLibrarian();
+        
+        // те заказы у которых юзер айди
+        //$today = time();
+
+        $today = new \DateTime();
+        //$today = date("y-m-d");
+        $orders = $orderRepository->findBy(['date_create'=>$today]);//$orderRepository->findByStatus("not confirmed");
+        $books = array();
+        //$orders = $orderRepository->findAll();
+        krsort($orders);
+        $users = array();
+        foreach ($orders as $order){
+            $user = $order->getUser()->getUser();
+            $books[$order->getId()] = $order->getBook()->getName();
+            $users[$order->getId()] = $user->getLastname() . ' ' . $user->getFirstname(). ' ' . $user->getPatronimic();
+        }
+        $html =$this->renderView('order/order_report_good_status.html.twig', [
+            'orders' => $orders,
+            'users' => $users,
+            'books' => $books,
+            'library' => $librarian->getLibrary()
+        ]);
+        $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+    }
+
+    #[Route('/reportByWeek', name: 'app_report_week', methods: ['GET'])]
+    public function makeReportByWeek(Request $request, OrderRepository $orderRepository, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $librarian = $user->getLibrarian();
+        
+        // те заказы у которых юзер айди
+        //$today = time();
+
+        $weekStart = new \DateTime("-7 days");
+        $weekEnd = new \DateTime();
+        //$today = date("y-m-d");
+        $orders = $orderRepository->getOrderByDataInterval($weekStart, $weekEnd);//$orderRepository->findByStatus("not confirmed");
+        $books = array();
+        //$orders = $orderRepository->findAll();
+        krsort($orders);
+        $users = array();
+        foreach ($orders as $order){
+            $user = $order->getUser()->getUser();
+            $books[$order->getId()] = $order->getBook()->getName();
+            $users[$order->getId()] = $user->getLastname() . ' ' . $user->getFirstname(). ' ' . $user->getPatronimic();
+        }
+        $html =$this->renderView('order/order_report_good_status.html.twig', [
+            'orders' => $orders,
+            'users' => $users,
+            'books' => $books,
+            'library' => $librarian->getLibrary()
+        ]);
+        $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+    }
+
+    #[Route('/reportByMonth', name: 'app_report_month', methods: ['GET'])]
+    public function makeReportByMonth(Request $request, OrderRepository $orderRepository, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $librarian = $user->getLibrarian();
+        
+        // те заказы у которых юзер айди
+        //$today = time();
+
+        $weekStart = new \DateTime("-30 days");
+        $weekEnd = new \DateTime();
+        //$today = date("y-m-d");
+        $orders = $orderRepository->getOrderByDataInterval($weekStart, $weekEnd);//$orderRepository->findByStatus("not confirmed");
+        $books = array();
+        //$orders = $orderRepository->findAll();
+        krsort($orders);
+        $users = array();
+        foreach ($orders as $order){
+            $user = $order->getUser()->getUser();
+            $books[$order->getId()] = $order->getBook()->getName();
+            $users[$order->getId()] = $user->getLastname() . ' ' . $user->getFirstname(). ' ' . $user->getPatronimic();
+        }
+        $html =$this->renderView('order/order_report_good_status.html.twig', [
+            'orders' => $orders,
+            'users' => $users,
+            'books' => $books,
+            'library' => $librarian->getLibrary()
+        ]);
+        $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
     }
 
     #[Route('/new', name: 'app_order_new', methods: ['GET', 'POST'])]

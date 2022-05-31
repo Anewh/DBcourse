@@ -39,6 +39,15 @@ class OrderRepository extends ServiceEntityRepository
         }
     }
 
+    public function getOrderByDataInterval($start, $end)
+    {
+        return $this->createQueryBuilder('e')->where('e.date_create BETWEEN :start AND :end')
+            ->setParameter('start', $start->format('Y-m-d'))
+            ->setParameter('end', $end->format('Y-m-d'))
+            ->getQuery()
+            ->getResult() ;
+    }
+
 //    /**
 //     * @return Order[] Returns an array of Order objects
 //     */

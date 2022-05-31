@@ -1,14 +1,7 @@
-{% extends 'base.html.twig' %}
-
 {% block body %}
     <h1>Заказы</h1>
     {% if is_granted('ROLE_LIBRARIAN')%}
     <h3>{{library.name}}</h3>
-    <a href="{{ path('app_report_status') }}" class="btn btn-outline-dark">Отчет о подтвержденных заказах</a>
-    <a href="{{ path('app_report_status_bad') }}" class="btn btn-outline-dark">Отчет о неподтвержденных заказах</a>
-    <a href="{{ path('app_report_days') }}" class="btn btn-outline-dark">Отчет о заказах за день</a>
-    <a href="{{ path('app_report_week') }}" class="btn btn-outline-dark">Отчет о заказах за неделю</a>
-    <a href="{{ path('app_report_month') }}" class="btn btn-outline-dark" style="margin-top:10px;">Отчет о заказах за месяц</a>
     {% endif %}
     <table class="table">
         <thead>
@@ -36,9 +29,6 @@
                     </td>
                 <td> {{ books[order.id] }} </td>
                 <td>{{ order.dateCreate ? order.dateCreate|date('Y-m-d') : '' }}
-                <td>
-                    <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn btn-outline-dark">Подробнее</a>
-                </td>
             </tr>
         {% else %}
             <tr>
