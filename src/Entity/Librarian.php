@@ -101,4 +101,10 @@ class Librarian
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        $user=$this->getUser();
+        return $user->getName()." ".$user->getLastname()." ".$user->getPatronimic();
+    }
 }

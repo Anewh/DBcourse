@@ -2,18 +2,18 @@
 
 {% block body %}
     <h1>Заказы</h1>
-    {% if is_granted('ROLE_LIBRARIAN')%}
+    {% if is_granted('ROLE_LIBRARIAN') and not is_granted('ROLE_ADMIN')%}
     <h3>{{library.name}}</h3>
     <a href="{{ path('app_report_status') }}" class="btn btn-outline-dark">Отчет о подтвержденных заказах</a>
     <a href="{{ path('app_report_status_bad') }}" class="btn btn-outline-dark">Отчет о неподтвержденных заказах</a>
     <a href="{{ path('app_report_days') }}" class="btn btn-outline-dark">Отчет о заказах за день</a>
     <a href="{{ path('app_report_week') }}" class="btn btn-outline-dark">Отчет о заказах за неделю</a>
-    <a href="{{ path('app_report_month') }}" class="btn btn-outline-dark" style="margin-top:10px;">Отчет о заказах за месяц</a>
+    <a href="{{ path('app_report_month') }}" class="btn btn-outline-dark">Отчет о заказах за месяц</a>
     {% endif %}
     <table class="table">
         <thead>
             <tr>
-            {% if is_granted('ROLE_LIBRARIAN')%}
+            {% if is_granted('ROLE_LIBRARIAN') or is_granted('ROLE_ADMIN')%}
                 <th>Заказчик</th>
                 {% endif %}
                 <th>Статус заказа</th>
@@ -24,7 +24,7 @@
         <tbody>
         {% for order in orders %}
             <tr>
-            {% if is_granted('ROLE_LIBRARIAN')%}
+            {% if is_granted('ROLE_LIBRARIAN') or is_granted('ROLE_ADMIN')%}
                 <td>{{ users[order.id] }}</td>
                 {% endif %}
                 <td>

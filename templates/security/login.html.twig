@@ -10,12 +10,12 @@
 
     {% if app.user %}
         <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            Вы уже вошли в аккаунт как {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">. Выйти</a>
         </div>
     {% endif %}
     
 <div class="d-flex flex-column align-items-center">
-    <h3 class="h3 mb-3 font-weight-normal">Please sign in</h3>
+    <h3 class="h3 mb-3 font-weight-normal">Войдите</h3>
     <label for="inputEmail">Email</label>
     <input type="email" value="{{ last_username }}" name="email" id="inputEmail" style="max-width:250px;" class="form-control" autocomplete="email" required autofocus>
     <label for="inputPassword">Пароль</label>

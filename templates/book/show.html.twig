@@ -22,7 +22,7 @@
                         <label for="disabledTextInput" class="form-label"> Книгу можно получить от следующих библиотек </label>
                           <select class="form-select form-select-sm" aria-label=".form-select-sm example" placeholder="Выберите библиотеку...">
                                 {% for library in libraries %}
-                                    <option>{{ library.name }}</option>
+                                    <option><p>{{ library.name }} </br></p></br><div class="mb-1 text-muted"> ({{ library.address }})</div></option>
                                 {% endfor %}
                           </select>
                        </div>
@@ -42,14 +42,17 @@
             </tr> #}
 
     <a href="{{ path('app_book_index') }}" class="btn btn-primary my-2">Вернуться к поиску книг</a>
-    {% if status is defined %}
-        {% if status == 'not confirmed' and not is_granted('ROLE_LIBRARIAN')%}
+    
+    <a href="{{ book.pdfUrl }}" class="btn btn-primary my-2">Читать онлайн</a>
+    {# {% if app.user %}
+    {% if status is defined%}
+        {% if status == 'not confirmed' and not is_granted('ROLE_LIBRARIAN') and not app.user %}
         <a href="{{ path('app_order_new', {'book_id': book.id}) }}" class="btn btn-primary my-2">Запросить книгу у выбранной библиотеки</a>
         <p class="lead text-muted"style="font-size:18px;" >Обязательно наличие читательского билета для получения книги. При запросе книги вы отправите библиотекарю соответствующее сообщение для получение данной книги в электронном виде. Если библиотекарь не подтвердит ваш заказ, вы не получите книгу. Если у Вас есть читательский билет, но получение книги не одобрили, повторите попытку или обратитесь лично по адресу библиотеки.</p>
           {# <div class="col-lg-6 col-md-8 mx-auto">
              <p class="lead text-muted"style="font-size:18px;" > По указанному запросу пока что нет книг :(  Попробуйте позже</p>
           </div> #}
-          {% endif %}
+          {# {% endif %}
           {% if status == 'confirmed' %}
           <a href="{{ book.pdfUrl }}" class="btn btn-primary my-2">Читать онлайн</a>
           {% endif %}
@@ -58,14 +61,10 @@
         <a href="{{ path('app_order_new', {'book_id': book.id}) }}" class="btn btn-primary my-2">Запросить книгу у выбранной библиотеки</a>
         <p class="lead text-muted"style="font-size:18px;" >Обязательно наличие читательского билета для получения книги. При запросе книги вы отправите библиотекарю соответствующее сообщение для получение данной книги в электронном виде. Если библиотекарь не подтвердит ваш заказ, вы не получите книгу. Если у Вас есть читательский билет, но получение книги не одобрили, повторите попытку или обратитесь лично по адресу библиотеки.</p>
         {% endif %}
-        {# <a href="{{ path('app_order_new', {'book_id': book.id}) }}" class="btn btn-primary my-2">Запросить книгу у выбранной библиотеки</a>
-        <p class="lead text-muted"style="font-size:18px;" >Обязательно наличие читательского билета для получения книги. При запросе книги вы отправите библиотекарю соответствующее сообщение для получение данной книги в электронном виде. Если библиотекарь не подтвердит ваш заказ, вы не получите книгу. Если у Вас есть читательский билет, но получение книги не одобрили, повторите попытку или обратитесь лично по адресу библиотеки.</p> #}
-          {# <div class="col-lg-6 col-md-8 mx-auto">
-             <p class="lead text-muted"style="font-size:18px;" > По указанному запросу пока что нет книг :(  Попробуйте позже</p>
-          </div> #}
     {% endif %}
     {% if is_granted('ROLE_LIBRARIAN') and canUpdate == true %}
         <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-primary my-2">Редактировать</a>
         {{ include('book/_delete_form.html.twig') }}
-    {% endif %}
+         {% endif %}
+    {% endif %} #}
 {% endblock %}

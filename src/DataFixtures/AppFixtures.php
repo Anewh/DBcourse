@@ -56,7 +56,7 @@ class AppFixtures extends Fixture
             $user->setRoles($this->roles[$randomaizer]);
             if($i==1) $user->setRoles($this->roles[2]);
 
-            if($randomaizer == 0){                 
+            if($randomaizer == 0 || ($i==1)){                 
                 $librarian = new Librarian();
                 $librarian->setPost("старший библиотекарь");
                 $choose = rand(1, 4);

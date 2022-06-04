@@ -7,7 +7,7 @@
     <div class="row py-lg-5">
       <div class="col-lg-6 col-md-8 mx-auto">
         <h1 class="fw-light">Библиотечные ресурсы</h1>
-        <p class="lead text-muted"style="font-size:18px;" >Поиск книг в электронном виде. Чтобы получить конкретную книгу, достаточно иметь читательский билет в библиотеке, предоставляющей электронный ресурс. Найдите нужную книгу за несколько кликов в бесплатном доступе.</p>
+        <p class="lead text-muted"style="font-size:18px;" >Поиск книг в электронном виде. Чтобы получить конкретную книгу, достаточно иметь читательский билет в библиотеке, предоставляющей электронный ресурс. Найдите нужную книгу за несколько кликов в бесплатном доступе - все заказы действуют ровно две недели от даты создания заказа, если тот не был подтвержден, либо 2 недели от даты подтверждения заказа.</p>
         
         {% if is_granted('ROLE_READER') and not is_granted('ROLE_LIBRARIAN') %}
         <p> <a href="{{ path('app_reader_orders', {'id': app.user.reader.id})}}" class="btn btn-primary my-2"> К моим заказам </a>
@@ -34,7 +34,12 @@
                     <div class"row justify-content-between mt-2">
                         <div class="btn-group" style="margin-top:10px;">
                             <a href="{{ path('app_book_show', {'id': book.id}) }}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                            {% if is_granted('ROLE_LIBRARIAN') and upd[book.id] == 'true' %}
+                            {% if (is_granted('ROLE_LIBRARIAN')) and upd is defined %}
+                            {% if  upd[book.id] == 'true' %}
+                              <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-sm btn-outline-secondary">Изменить</a>
+                            {% endif %}
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-sm btn-outline-secondary">Изменить</a>
                             {% endif %}
                         </div>

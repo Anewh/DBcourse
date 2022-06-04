@@ -31,9 +31,17 @@ class OrderController extends AbstractController
         $email = $session->get(Security::LAST_USERNAME) ?? null;
         $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
         $librarian = $user->getLibrarian();
-        
+        $liba;
         // те заказы у которых юзер айди
-        $orders = $orderRepository->findByLibrary($librarian->getLibrary());
+        // var_dump($user->getRoles());
+        // die();
+        if($user->getRoles()===array("ROLE_ADMIN", "ROLE_USER")){
+            $orders = $orderRepository->findAll();
+            $liba['name'] = 'все библиотеки';
+        } else {
+            $liba = $librarian->getLibrary();
+            $orders = $orderRepository->findByLibrary($liba);
+        }
         $books = array();
         //$orders = $orderRepository->findAll();
         krsort($orders);
@@ -48,7 +56,7 @@ class OrderController extends AbstractController
             'orders' => $orders,
             'users' => $users,
             'books' => $books,
-            'library' => $librarian->getLibrary(),
+            'library' => $liba
         ]);
     }
 
@@ -313,6 +321,10 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $order->setStatus($form->get('status')->getData());
+            $date = new \DateTime();
+            //$order->setDate('02.06.2022');
+            $order->setDateCreate($date);
             $orderRepository->add($order, true);
 
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);

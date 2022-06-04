@@ -22,15 +22,18 @@ class LibrarianController extends AbstractController
     }
 
     #[Route('/new', name: 'app_librarian_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, LibrarianRepository $librarianRepository): Response
+    public function new(Request $request, LibrarianRepository $librarianRepository, ManagerRegistry $doctrine): Response
     {
         $librarian = new Librarian();
         $form = $this->createForm(LibrarianType::class, $librarian);
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
             $librarianRepository->add($librarian, true);
-
+            //$user = $librarian->getUser();
+            //$user->setRoles(['ROLE_LIBRARIAN']);
+            //$entityManager->getRepository(User::class)->add($user);
             return $this->redirectToRoute('app_librarian_index', [], Response::HTTP_SEE_OTHER);
         }
 
